@@ -1,3 +1,8 @@
+Personal Changes
+================
+
+- Map the q button on qwerty to #, so that the left pinky has more functionality
+
 Plover
 ======
 
@@ -143,3 +148,4 @@ Please follow through for your system:
    :target: https://circleci.com/gh/openstenoproject/plover
 
 .. vim: tw=72
+
