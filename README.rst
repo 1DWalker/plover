@@ -1,7 +1,8 @@
 Personal Changes
 ================
 
-- Map the q button on qwerty to #, so that the left pinky has more functionality
+- Map the q button on qwerty to #, so that the left pinky has more functionality and so there is no ambiguity as to which finger should stroke #
+- Add {MODE:RANDOM_CASE} to write text such as "HavE A niCe DAy!"
 
 Plover
 ======
