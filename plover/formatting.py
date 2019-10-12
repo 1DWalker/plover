@@ -11,6 +11,7 @@ from os.path import commonprefix
 from collections import namedtuple
 import re
 import string
+import random
 
 from plover.orthography import add_suffix
 from plover.registry import registry
@@ -19,6 +20,7 @@ from plover.registry import registry
 CASE_CAP_FIRST_WORD = 'cap_first_word'
 CASE_LOWER = 'lower'
 CASE_LOWER_FIRST_CHAR = 'lower_first_char'
+CASE_RANDOM = 'random_caps_all_characters'
 CASE_TITLE = 'title'
 CASE_UPPER = 'upper'
 CASE_UPPER_FIRST_WORD = 'upper_first_word'
@@ -43,6 +45,7 @@ META_UPPER = '<'
 MODE_CAMEL = 'CAMEL'
 MODE_CAPS = 'CAPS'
 MODE_LOWER = 'LOWER'
+MODE_RANDOM = "RANDOM_CASE"
 MODE_RESET = 'RESET'
 MODE_RESET_CASE = 'RESET_CASE'
 MODE_RESET_SPACE = 'RESET_SPACE'
@@ -908,6 +911,8 @@ def _apply_meta_mode(meta, ctx):
         action.case = CASE_TITLE
     elif command == MODE_LOWER:
         action.case = CASE_LOWER
+    elif command == MODE_RANDOM:
+        action.case = CASE_RANDOM
     elif command == MODE_SNAKE:
         action.space_char = '_'
     elif command == MODE_CAMEL:
@@ -961,7 +966,17 @@ def _apply_mode_case(text, case, appended):
     if case == CASE_LOWER:
         return text.lower()
     if case == CASE_UPPER:
-        return text.upper()
+       return text.upper()
+    if case == CASE_RANDOM:
+        newtext = ""
+        for c in text:
+            if c.isalpha():
+                if random.randint(0, 1) == 0:
+                    c = c.upper()
+                else:
+                    c = c.lower()
+            newtext += c
+        return newtext
     if case == CASE_TITLE:
         # Do nothing to appended output
         if appended:
