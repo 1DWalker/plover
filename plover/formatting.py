@@ -12,6 +12,7 @@ from collections import namedtuple
 import re
 import string
 import random
+import math
 
 from plover.orthography import add_suffix
 from plover.registry import registry
@@ -90,6 +91,9 @@ META_RE = re.compile(r"""(?:%s%s|%s%s|[^%s%s])+ # One or more of anything
 
 WORD_RX = re.compile(r'(?:\d+(?:[.,]\d+)+|[\'\w]+[-\w\']*|[^\w\s]+)\s*', re.UNICODE)
 
+# State for MODE:RANDOM
+state_num = 0
+state_case = 0
 
 class RetroFormatter:
     """Helper for iterating over the result of previous translations.
@@ -959,7 +963,6 @@ def _apply_mode(text, case, space_char, begin, last_action):
         text = _lower_first_character(text)
     return text
 
-
 def _apply_mode_case(text, case, appended):
     if case is None:
         return text
@@ -969,12 +972,27 @@ def _apply_mode_case(text, case, appended):
        return text.upper()
     if case == CASE_RANDOM:
         newtext = ""
+        global state_num, state_case
+
         for c in text:
             if c.isalpha():
-                if random.randint(0, 1) == 0:
+                if random.random() < 1 / (1 + math.exp(-0.7 * state_num)):
                     c = c.upper()
+
+                    if state_case == 1:
+                        state_num -= 1
+                    else:
+                        state_case = 1
+                        state_num = -1
                 else:
                     c = c.lower()
+
+                    if state_case == 0:
+                        state_num += 1
+                    else:
+                        state_case = 0
+                        state_num = 1
+
             newtext += c
         return newtext
     if case == CASE_TITLE:
